@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+import pandas as pd
 
 challenge = Flask(__name__)
 
@@ -10,11 +11,13 @@ def home():
 
 @challenge.route('/api/v1/<word>')
 def api(word):
+    filename = "dictionary.csv"
+    df = pd.read_csv(filename, parse_dates=['word'])
+    meaning = str(df.loc[df['word'] == word]['definition'].squeeze())
     return {
-            "definition": word.upper(),
+            "definition": meaning,
             "word": word
             }
 
 
-if __name__ == "__main__":
-    challenge.run(debug=True, port=5001)
+challenge.run(debug=True, port=5001)
